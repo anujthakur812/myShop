@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Wingify Shop - Your one-stop destination for electronics, fashion, home, sports, beauty and books." />
+  <title>Wingify Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <button type="button" class="logo" data-page="home">🛍️ Wingify<span>Shop</span></button>
+      <nav>
+        <ul class="nav-links">
+          <li><a data-page="home" class="active">Home</a></li>
+          <li><a data-page="products">Products</a></li>
+          <li><a data-page="cart">Cart</a></li>
+          <li><a data-page="checkout">Checkout</a></li>
+          <li><a data-page="account">Account</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="cart-link" data-page="cart" aria-label="Shopping cart">
+          <span class="cart-icon">🛒</span>
+          <span id="cart-count" class="cart-badge">0</span>
+        </button>
+        <div class="account-wrapper">
+          <button id="account-toggle" class="account-toggle" type="button">
+            <span>👤</span>
+            <span id="account-label">Account</span>
+          </button>
+          <div id="account-menu" class="account-menu">
+            <a data-page="account">My Account</a>
+            <button id="logout-btn" type="button" style="display:none">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <div id="page-home" class="page active">
+      <section class="hero">
+        <h1>Welcome to Wingify Shop</h1>
+        <p>Discover premium products across electronics, fashion, home & living, sports, beauty, and books — all in one place.</p>
+        <button type="button" class="btn btn-primary" data-page="products">Shop Now</button>
+      </section>
+      <section class="section container">
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-desc">Browse our curated collections and find exactly what you need</p>
+        <div class="categories-grid" id="categories-grid"></div>
+      </section>
+      <section class="section about-section">
+        <div class="container about-content">
+          <h2 class="section-title">About Wingify Shop</h2>
+          <p>Wingify Shop is your trusted online marketplace offering quality products at competitive prices. We handpick every item to ensure you get the best value, fast shipping, and excellent customer service.</p>
+          <p>From the latest gadgets to timeless fashion, cozy home essentials to fitness gear — we have something for everyone. Join thousands of happy customers who shop with us every day.</p>
+          <div class="features-grid">
+            <div class="feature-card"><div class="feature-icon">🚚</div><h3>Free Shipping</h3><p>On orders over $50 nationwide</p></div>
+            <div class="feature-card"><div class="feature-icon">🔒</div><h3>Secure Payment</h3><p>100% secure checkout process</p></div>
+            <div class="feature-card"><div class="feature-icon">↩️</div><h3>Easy Returns</h3><p>30-day hassle-free returns</p></div>
+            <div class="feature-card"><div class="feature-icon">💬</div><h3>24/7 Support</h3><p>We're here to help anytime</p></div>
+          </div>
+        </div>
+      </section>
+      <section class="container">
+        <div class="promo-banner">
+          <div><span class="promo-tag">LIMITED TIME</span><h3>Summer Sale — Up to 40% Off!</h3><p>Don't miss out on incredible deals across all categories.</p></div>
+          <button type="button" class="btn btn-accent" data-page="products">View Deals</button>
+        </div>
+        <div class="ads-grid">
+          <div class="ad-card"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=300&fit=crop" alt="New Arrivals" /><div class="ad-card-body"><h4>New Arrivals</h4><p>Check out the latest products added this week</p></div></div>
+          <div class="ad-card"><img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&h=300&fit=crop" alt="Gift Ideas" /><div class="ad-card-body"><h4>Perfect Gift Ideas</h4><p>Find the ideal gift for every occasion</p></div></div>
+          <div class="ad-card"><img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&h=300&fit=crop" alt="Best Sellers" /><div class="ad-card-body"><h4>Best Sellers</h4><p>Shop our most popular items loved by customers</p></div></div>
+        </div>
+        <div class="promo-banner dark">
+          <div><span class="promo-tag">NEW MEMBERS</span><h3>Sign Up & Get 10% Off Your First Order</h3><p>Create an account today and unlock exclusive member benefits.</p></div>
+          <button type="button" class="btn btn-primary" data-page="account">Create Account</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div id="page-products" class="page">
+      <div class="container">
+        <h1 class="page-title">Our Products</h1>
+        <p class="page-subtitle">Explore our full collection across all categories</p>
+        <div class="filter-bar" id="filter-bar"><button type="button" class="filter-btn active" data-category="all">All Products</button></div>
+        <div class="products-grid" id="products-grid"></div>
+      </div>
+    </div>
+
+    <!-- CART -->
+    <div id="page-cart" class="page">
+      <div class="container">
+        <h1 class="page-title">Shopping Cart</h1>
+        <p class="page-subtitle">Review your items before checkout</p>
+        <div id="cart-content"></div>
+      </div>
+    </div>
+
+    <!-- CHECKOUT -->
+    <div id="page-checkout" class="page">
+      <div class="container">
+        <h1 class="page-title">Checkout</h1>
+        <p class="page-subtitle">Complete your order with shipping and payment details</p>
+        <div id="checkout-content"></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div id="page-account" class="page">
+      <div class="container">
+        <div class="account-card">
+          <h2>My Account</h2>
+          <p class="subtitle">Sign up to track orders and enjoy member benefits</p>
+          <form name="signupForm" id="signup-form">
+            <div class="form-row">
+              <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" required placeholder="John" /></div>
+              <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" required placeholder="Doe" /></div>
+            </div>
+            <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required placeholder="john.doe@example.com" /></div>
+            <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" required placeholder="+1 234 567 8900" /></div>
+            <button type="submit" class="btn btn-accent" style="width:100%">Sign Up</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>Wingify Shop</h4><p style="font-size:.9rem;color:#94a3b8;margin:0">Your trusted online shopping destination for quality products at great prices.</p></div>
+        <div class="footer-col"><h4>Quick Links</h4><ul><li><a data-page="home">Home</a></li><li><a data-page="products">Products</a></li><li><a data-page="cart">Cart</a></li><li><a data-page="checkout">Checkout</a></li><li><a data-page="account">Account</a></li></ul></div>
+        <div class="footer-col"><h4>Categories</h4><ul id="footer-categories"></ul></div>
+        <div class="footer-col"><h4>Customer Service</h4><ul><li><a href="#">Contact Us</a></li><li><a href="#">FAQ</a></li><li><a href="#">Shipping Info</a></li><li><a href="#">Returns Policy</a></li><li><a href="#">Privacy Policy</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Wingify Shop. All rights reserved.</span>
+        <div class="footer-social"><a href="#">📘</a><a href="#">🐦</a><a href="#">📷</a><a href="#">💼</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const CATEGORIES = [
+      { id: "electronics", name: "Electronics", icon: "💻" },
+      { id: "fashion", name: "Fashion", icon: "👗" },
+      { id: "home", name: "Home & Living", icon: "🏠" },
+      { id: "sports", name: "Sports", icon: "⚽" },
+      { id: "beauty", name: "Beauty", icon: "💄" },
+      { id: "books", name: "Books", icon: "📚" },
+    ];
+
+    const PRODUCTS = [
+      { id: 1, name: "Wireless Headphones", category: "electronics", price: 79.99, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop", description: "Premium noise-cancelling wireless headphones with 30hr battery." },
+      { id: 2, name: "Smart Watch Pro", category: "electronics", price: 249.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop", description: "Track fitness, receive notifications, and stay connected." },
+      { id: 3, name: "Laptop Stand", category: "electronics", price: 34.99, image: "https://images.unsplash.com/photo-1527864550417-7fd91ec9a736?w=400&h=400&fit=crop", description: "Ergonomic aluminum stand for better posture." },
+      { id: 4, name: "Classic Denim Jacket", category: "fashion", price: 89.99, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93b0?w=400&h=400&fit=crop", description: "Timeless denim jacket for every season." },
+      { id: 5, name: "Running Sneakers", category: "fashion", price: 119.99, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop", description: "Lightweight sneakers built for comfort and speed." },
+      { id: 6, name: "Leather Handbag", category: "fashion", price: 159.99, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop", description: "Handcrafted genuine leather handbag." },
+      { id: 7, name: "Ceramic Vase Set", category: "home", price: 45.99, image: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=400&h=400&fit=crop", description: "Minimalist ceramic vases for modern decor." },
+      { id: 8, name: "Scented Candle Pack", category: "home", price: 29.99, image: "https://images.unsplash.com/photo-1602600167679-8898379a2a8a?w=400&h=400&fit=crop", description: "Set of 3 soy wax candles in calming scents." },
+      { id: 9, name: "Throw Pillow Set", category: "home", price: 39.99, image: "https://images.unsplash.com/photo-1584100936595-c0654b55a2d2?w=400&h=400&fit=crop", description: "Soft decorative pillows for your living room." },
+      { id: 10, name: "Yoga Mat Premium", category: "sports", price: 49.99, image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=400&fit=crop", description: "Non-slip eco-friendly yoga mat with carrying strap." },
+      { id: 11, name: "Dumbbell Set 10kg", category: "sports", price: 69.99, image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&h=400&fit=crop", description: "Adjustable dumbbell set for home workouts." },
+      { id: 12, name: "Football Official Size", category: "sports", price: 34.99, image: "https://images.unsplash.com/photo-1614632537423-1e6c2f7e0aab?w=400&h=400&fit=crop", description: "FIFA-approved match football." },
+      { id: 13, name: "Skincare Gift Set", category: "beauty", price: 89.99, image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&h=400&fit=crop", description: "Complete skincare routine in one beautiful set." },
+      { id: 14, name: "Perfume Elegance", category: "beauty", price: 129.99, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop", description: "Luxury fragrance with notes of jasmine and amber." },
+      { id: 15, name: "Makeup Brush Kit", category: "beauty", price: 39.99, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=400&fit=crop", description: "Professional 12-piece brush set with case." },
+      { id: 16, name: "The Art of Coding", category: "books", price: 24.99, image: "https://images.unsplash.com/photo-1532012197277-84a72955b861?w=400&h=400&fit=crop", description: "Master programming with this comprehensive guide." },
+      { id: 17, name: "Mindful Living", category: "books", price: 18.99, image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop", description: "A guide to finding peace in everyday life." },
+      { id: 18, name: "Cookbook Deluxe", category: "books", price: 32.99, image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=400&fit=crop", description: "500 recipes from around the world." },
+    ];
+
+    const CART_KEY = "wingifyShop_cart";
+    const ACCOUNT_KEY = "wingifyShop_account";
+    let activeCategory = "all";
+
+    const PAGE_TITLES = { home: "Wingify Shop - Home", products: "Products - Wingify Shop", cart: "Cart - Wingify Shop", checkout: "Checkout - Wingify Shop", account: "Account - Wingify Shop" };
+
+    function getCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } }
+    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(); }
+    function getAccount() { try { return JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || null; } catch { return null; } }
+    function saveAccount(data) { localStorage.setItem(ACCOUNT_KEY, JSON.stringify(data)); updateAccountUI(); }
+    function formatPrice(n) { return "$" + n.toFixed(2); }
+    function getCartTotal() { return getCart().reduce((s, i) => s + i.price * i.quantity, 0); }
+    function getCartCount() { return getCart().reduce((s, i) => s + i.quantity, 0); }
+    function getCategoryName(id) { return CATEGORIES.find(c => c.id === id)?.name || id; }
+    function getShipping(subtotal) { return subtotal >= 50 ? 0 : 5.99; }
+
+    function showToast(msg) {
+      let t = document.getElementById("toast");
+      if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }
+      t.textContent = msg; t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
+    function updateCartBadge() {
+      const badge = document.getElementById("cart-count");
+      if (!badge) return;
+      const count = getCartCount();
+      badge.textContent = count;
+      badge.style.display = count > 0 ? "flex" : "none";
+    }
+
+    function updateAccountUI() {
+      const account = getAccount();
+      const label = document.getElementById("account-label");
+      const logoutBtn = document.getElementById("logout-btn");
+      if (!label) return;
+      label.textContent = account ? account.firstName : "Account";
+      if (logoutBtn) logoutBtn.style.display = account ? "block" : "none";
+    }
+
+    function addToCart(productId, qty = 1) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      const cart = getCart();
+      const existing = cart.find(i => i.id === productId);
+      if (existing) existing.quantity += qty;
+      else cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: qty });
+      saveCart(cart);
+      showToast(product.name + " added to cart!");
+    }
+
+    function removeFromCart(productId) { saveCart(getCart().filter(i => i.id !== productId)); renderCart(); }
+    function updateQuantity(productId, qty) {
+      if (qty <= 0) { removeFromCart(productId); return; }
+      const cart = getCart();
+      const item = cart.find(i => i.id === productId);
+      if (item) { item.quantity = qty; saveCart(cart); renderCart(); }
+    }
+    function clearCart() { localStorage.removeItem(CART_KEY); updateCartBadge(); }
+
+    function showPage(page, category) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page-" + page).classList.add("active");
+      document.querySelectorAll(".nav-links a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
+      document.title = PAGE_TITLES[page] || "Wingify Shop";
+      window.scrollTo(0, 0);
+      document.getElementById("account-menu")?.classList.remove("open");
+      if (category) activeCategory = category;
+      if (page === "products") renderProducts(activeCategory);
+      if (page === "cart") renderCart();
+      if (page === "checkout") renderCheckout();
+      if (page === "account") loadAccountForm();
+    }
+
+    function renderCategories() {
+      document.getElementById("categories-grid").innerHTML = CATEGORIES.map(cat =>
+        `<div class="category-card" data-page="products" data-category="${cat.id}"><div class="category-icon">${cat.icon}</div><div class="category-name">${cat.name}</div></div>`
+      ).join("");
+      document.getElementById("footer-categories").innerHTML = CATEGORIES.map(cat =>
+        `<li><a data-page="products" data-category="${cat.id}">${cat.name}</a></li>`
+      ).join("");
+    }
+
+    function renderFilterBar() {
+      const bar = document.getElementById("filter-bar");
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "filter-btn";
+        btn.dataset.category = cat.id;
+        btn.textContent = cat.name;
+        bar.appendChild(btn);
+      });
+      bar.addEventListener("click", e => {
+        if (!e.target.classList.contains("filter-btn")) return;
+        bar.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        activeCategory = e.target.dataset.category;
+        renderProducts(activeCategory);
+      });
+    }
+
+    function renderProducts(category) {
+      const filtered = category === "all" ? PRODUCTS : PRODUCTS.filter(p => p.category === category);
+      document.getElementById("products-grid").innerHTML = filtered.map(p => `
+        <article class="product-card">
+          <img class="product-image" src="${p.image}" alt="${p.name}" loading="lazy" />
+          <div class="product-body">
+            <span class="product-category">${getCategoryName(p.category)}</span>
+            <h3 class="product-name">${p.name}</h3>
+            <p class="product-desc">${p.description}</p>
+            <div class="product-footer">
+              <span class="product-price">${formatPrice(p.price)}</span>
+              <button type="button" class="btn btn-accent btn-sm" onclick="addToCart(${p.id})">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+      const bar = document.getElementById("filter-bar");
+      bar.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.category === category));
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const el = document.getElementById("cart-content");
+      if (!cart.length) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🛒</div><h3>Your cart is empty</h3><p>Looks like you haven't added anything yet.</p><button type="button" class="btn btn-accent" data-page="products">Browse Products</button></div>`;
+        return;
+      }
+      const subtotal = getCartTotal();
+      const shipping = getShipping(subtotal);
+      const total = subtotal + shipping;
+      el.innerHTML = `
+        <div class="cart-layout">
+          <div class="cart-items">${cart.map(item => `
+            <div class="cart-item">
+              <img class="cart-item-image" src="${item.image}" alt="${item.name}" />
+              <div class="cart-item-details"><h3 class="cart-item-name">${item.name}</h3><span class="cart-item-price">${formatPrice(item.price)} each</span></div>
+              <div class="cart-item-actions">
+                <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">−</button>
+                <span class="qty-value">${item.quantity}</span>
+                <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})" style="margin-left:.5rem">Remove</button>
+              </div>
+              <div style="font-weight:700;min-width:80px;text-align:right">${formatPrice(item.price * item.quantity)}</div>
+            </div>`).join("")}
+          </div>
+          <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row"><span>Subtotal (${getCartCount()} items)</span><span>${formatPrice(subtotal)}</span></div>
+            <div class="summary-row"><span>Shipping</span><span>${shipping === 0 ? "FREE" : formatPrice(shipping)}</span></div>
+            <div class="summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
+            <button type="button" class="btn btn-accent" style="width:100%;margin-top:1rem" data-page="checkout">Proceed to Checkout</button>
+            <button type="button" class="btn btn-outline" style="width:100%;margin-top:.5rem" data-page="products">Continue Shopping</button>
+          </div>
+        </div>`;
+    }
+
+    function renderCheckout() {
+      const cart = getCart();
+      const el = document.getElementById("checkout-content");
+      const account = getAccount();
+      if (!cart.length) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><h3>No items to checkout</h3><p>Add products to your cart before checking out.</p><button type="button" class="btn btn-accent" data-page="products">Browse Products</button></div>`;
+        return;
+      }
+      const subtotal = getCartTotal();
+      const shipping = getShipping(subtotal);
+      const total = subtotal + shipping;
+      el.innerHTML = `
+        <form id="checkout-form" class="checkout-layout">
+          <div>
+            <div class="checkout-section">
+              <h3>📍 Shipping Address</h3>
+              <div class="form-row">
+                <div class="form-group"><label for="fullName">Full Name</label><input type="text" id="fullName" name="fullName" required value="${account ? account.firstName + " " + account.lastName : ""}" /></div>
+                <div class="form-group"><label for="checkoutPhone">Phone Number</label><input type="tel" id="checkoutPhone" name="phone" required placeholder="+1 234 567 8900" value="${account ? account.phone : ""}" /></div>
+              </div>
+              <div class="form-group"><label for="checkoutEmail">Email Address</label><input type="email" id="checkoutEmail" name="email" required placeholder="you@example.com" value="${account ? account.email : ""}" /></div>
+              <div class="form-group"><label for="address">Street Address</label><input type="text" id="address" name="address" required placeholder="123 Main Street" /></div>
+              <div class="form-row">
+                <div class="form-group"><label for="city">City</label><input type="text" id="city" name="city" required placeholder="New York" /></div>
+                <div class="form-group"><label for="state">State / Province</label><input type="text" id="state" name="state" required placeholder="NY" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="zip">ZIP / Postal Code</label><input type="text" id="zip" name="zip" required placeholder="10001" /></div>
+                <div class="form-group"><label for="country">Country</label><select id="country" name="country" required><option value="">Select country</option><option value="US">United States</option><option value="IN">India</option><option value="UK">United Kingdom</option><option value="CA">Canada</option><option value="AU">Australia</option></select></div>
+              </div>
+            </div>
+            <div class="checkout-section">
+              <h3>💳 Payment Method</h3>
+              <div class="payment-options">
+                <div class="payment-option"><input type="radio" id="pay-credit" name="payment" value="Credit Card" required checked /><label for="pay-credit"><span class="payment-icon">💳</span>Credit Card</label></div>
+                <div class="payment-option"><input type="radio" id="pay-debit" name="payment" value="Debit Card" /><label for="pay-debit"><span class="payment-icon">🏦</span>Debit Card</label></div>
+                <div class="payment-option"><input type="radio" id="pay-upi" name="payment" value="UPI" /><label for="pay-upi"><span class="payment-icon">📱</span>UPI</label></div>
+                <div class="payment-option"><input type="radio" id="pay-netbanking" name="payment" value="Net Banking" /><label for="pay-netbanking"><span class="payment-icon">🏛️</span>Net Banking</label></div>
+                <div class="payment-option"><input type="radio" id="pay-wallet" name="payment" value="Wallet" /><label for="pay-wallet"><span class="payment-icon">👛</span>Wallet</label></div>
+                <div class="payment-option"><input type="radio" id="pay-cod" name="payment" value="Cash on Delivery" /><label for="pay-cod"><span class="payment-icon">💵</span>Cash on Delivery</label></div>
+                <div class="payment-option"><input type="radio" id="pay-paypal" name="payment" value="PayPal" /><label for="pay-paypal"><span class="payment-icon">🅿️</span>PayPal</label></div>
+                <div class="payment-option"><input type="radio" id="pay-emi" name="payment" value="EMI" /><label for="pay-emi"><span class="payment-icon">📊</span>EMI</label></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cart-summary">
+              <h3>Order Summary</h3>
+              ${cart.map(item => `<div class="summary-row"><span>${item.name} × ${item.quantity}</span><span>${formatPrice(item.price * item.quantity)}</span></div>`).join("")}
+              <div class="summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+              <div class="summary-row"><span>Shipping</span><span>${shipping === 0 ? "FREE" : formatPrice(shipping)}</span></div>
+              <div class="summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
+              <button type="submit" class="btn btn-accent" style="width:100%;margin-top:1rem">Place Order & Pay ${formatPrice(total)}</button>
+            </div>
+          </div>
+        </form>`;
+
+      document.getElementById("checkout-form").addEventListener("submit", e => {
+        e.preventDefault();
+        const form = e.target;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const payment = form.querySelector('input[name="payment"]:checked').value;
+        const orderId = "WS-" + Date.now().toString(36).toUpperCase();
+        clearCart();
+        el.innerHTML = `
+          <div class="order-success">
+            <div class="order-success-icon">✅</div>
+            <h2>Order Placed Successfully!</h2>
+            <p>Thank you for shopping with Wingify Shop.</p>
+            <p><strong>Order ID:</strong> ${orderId}</p>
+            <p><strong>Payment:</strong> ${payment}</p>
+            <p><strong>Total Paid:</strong> ${formatPrice(total)}</p>
+            <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+              <button type="button" class="btn btn-accent" data-page="products">Continue Shopping</button>
+              <button type="button" class="btn btn-outline" data-page="home">Back to Home</button>
+            </div>
+          </div>`;
+        showToast("Order placed successfully!");
+      });
+    }
+
+    function loadAccountForm() {
+      const account = getAccount();
+      if (account) {
+        document.getElementById("firstName").value = account.firstName;
+        document.getElementById("lastName").value = account.lastName;
+        document.getElementById("email").value = account.email;
+        document.getElementById("phone").value = account.phone;
+      }
+    }
+
+    document.addEventListener("click", e => {
+      const target = e.target.closest("[data-page]");
+      if (target) {
+        e.preventDefault();
+        showPage(target.dataset.page, target.dataset.category);
+      }
+    });
+
+    document.getElementById("account-toggle").addEventListener("click", e => {
+      e.stopPropagation();
+      document.getElementById("account-menu").classList.toggle("open");
+    });
+    document.addEventListener("click", () => document.getElementById("account-menu").classList.remove("open"));
+
+    document.getElementById("logout-btn").addEventListener("click", e => {
+      e.preventDefault();
+      localStorage.removeItem(ACCOUNT_KEY);
+      updateAccountUI();
+      document.getElementById("account-menu").classList.remove("open");
+      showToast("Logged out successfully");
+    });
+
+    document.getElementById("signup-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+      };
+      if (!data.firstName || !data.lastName || !data.email || !data.phone) {
+        showToast("Please fill in all fields");
+        return;
+      }
+      saveAccount(data);
+      showToast("Welcome, " + data.firstName + "!");
+    });
+
+    renderCategories();
+    renderFilterBar();
+    updateCartBadge();
+    updateAccountUI();
+    loadAccountForm();
+  </script>
+</body>
+</html>
