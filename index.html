@@ -201,6 +201,29 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
     let activeCategory = "all";
 
     const PAGE_TITLES = { home: "Wingify Shop - Home", products: "Products - Wingify Shop", cart: "Cart - Wingify Shop", checkout: "Checkout - Wingify Shop", account: "Account - Wingify Shop" };
+    const VALID_PAGES = ["home", "products", "cart", "checkout", "account"];
+
+    function buildHash(page, category) {
+      if (page === "home") return "#home";
+      if (page === "products" && category && category !== "all") return `#products/${category}`;
+      return `#${page}`;
+    }
+
+    function setPageHash(page, category) {
+      const hash = buildHash(page, category);
+      if (window.location.hash !== hash) window.location.hash = hash.slice(1);
+    }
+
+    function getPageFromHash() {
+      const raw = window.location.hash.replace(/^#/, "").toLowerCase();
+      if (!raw || raw === "home") return { page: "home", category: null };
+      const [page, category] = raw.split("/");
+      if (!VALID_PAGES.includes(page)) return { page: "home", category: null };
+      if (page === "products" && category && CATEGORIES.some((c) => c.id === category)) {
+        return { page, category };
+      }
+      return { page, category: null };
+    }
 
     function getCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } }
     function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(); }
@@ -256,7 +279,8 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
     }
     function clearCart() { localStorage.removeItem(CART_KEY); updateCartBadge(); }
 
-    function showPage(page, category) {
+    function showPage(page, category, updateHash = false) {
+      if (!VALID_PAGES.includes(page)) page = "home";
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       document.getElementById("page-" + page).classList.add("active");
       document.querySelectorAll(".nav-links a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
@@ -268,6 +292,7 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       if (page === "cart") renderCart();
       if (page === "checkout") renderCheckout();
       if (page === "account") loadAccountForm();
+      if (updateHash) setPageHash(page, activeCategory);
     }
 
     function renderCategories() {
@@ -449,8 +474,13 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       const target = e.target.closest("[data-page]");
       if (target) {
         e.preventDefault();
-        showPage(target.dataset.page, target.dataset.category);
+        showPage(target.dataset.page, target.dataset.category, true);
       }
+    });
+
+    window.addEventListener("hashchange", () => {
+      const { page, category } = getPageFromHash();
+      showPage(page, category);
     });
 
     document.getElementById("account-toggle").addEventListener("click", e => {
@@ -488,6 +518,11 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
     updateCartBadge();
     updateAccountUI();
     loadAccountForm();
+
+    const { page: initialPage, category: initialCategory } = getPageFromHash();
+    if (initialPage !== "home" || initialCategory) {
+      showPage(initialPage, initialCategory);
+    }
   </script>
 </body>
 </html>
