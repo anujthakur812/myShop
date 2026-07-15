@@ -8,30 +8,55 @@ const PAGE_TITLES = {
   account: "Account - Wingify Shop",
 };
 const VALID_PAGES = ["home", "products", "cart", "checkout", "account"];
+const PAGE_PATHS = { home: "", products: "product", cart: "cart", checkout: "checkout", account: "account" };
+const PATH_TO_PAGE = { product: "products", products: "products", cart: "cart", checkout: "checkout", account: "account" };
+const ROUTE_SEGMENTS = new Set(["product", "products", "cart", "checkout", "account", "home", "index.html"]);
 
-function buildHash(page, category) {
-  if (page === "home") return "#home";
-  if (page === "products" && category && category !== "all") return `#products/${category}`;
-  return `#${page}`;
+function getBasePath() {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  if (parts.length === 0) return "";
+  if (ROUTE_SEGMENTS.has(parts[parts.length - 1].toLowerCase())) parts.pop();
+  return parts.length ? "/" + parts.join("/") : "";
 }
 
-function setPageHash(page, category) {
-  const hash = buildHash(page, category);
-  if (window.location.hash !== hash) window.location.hash = hash.slice(1);
+function getCategoryFromQuery() {
+  const cat = new URLSearchParams(window.location.search).get("category");
+  return cat && CATEGORIES.some((c) => c.id === cat) ? cat : null;
 }
 
-function getPageFromHash() {
-  const raw = window.location.hash.replace(/^#/, "").toLowerCase();
-  if (!raw || raw === "home") return { page: "home", category: null };
-  const [page, category] = raw.split("/");
-  if (!VALID_PAGES.includes(page)) return { page: "home", category: null };
-  if (page === "products" && category && CATEGORIES.some((c) => c.id === category)) {
-    return { page, category };
+function getPageFromUrl() {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  if (parts.length === 0) return { page: "home", category: getCategoryFromQuery() };
+  const segment = parts[parts.length - 1].toLowerCase();
+  if (segment === "index.html") return { page: "home", category: getCategoryFromQuery() };
+  const page = PATH_TO_PAGE[segment];
+  if (page) return { page, category: getCategoryFromQuery() };
+  return { page: "home", category: getCategoryFromQuery() };
+}
+
+function buildUrl(page, category) {
+  const base = getBasePath();
+  const params = new URLSearchParams(window.location.search);
+  if (page === "products" && category && category !== "all") {
+    params.set("category", category);
+  } else {
+    params.delete("category");
   }
-  return { page, category: null };
+  const query = params.toString();
+  const segment = PAGE_PATHS[page];
+  const path = segment ? (base || "") + "/" + segment : (base ? base + "/" : "/");
+  return query ? path + "?" + query : path;
 }
 
-function showPage(page, category, updateHash = false) {
+function setPageUrl(page, category) {
+  const url = buildUrl(page, category);
+  const current = window.location.pathname + window.location.search;
+  if (current !== url) {
+    history.pushState({ page, category: category || activeCategory }, "", url);
+  }
+}
+
+function showPage(page, category, updateUrl = false) {
   if (!VALID_PAGES.includes(page)) page = "home";
   document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.getElementById("page-" + page).classList.add("active");
@@ -47,7 +72,7 @@ function showPage(page, category, updateHash = false) {
   if (page === "cart") renderCart();
   if (page === "checkout") renderCheckout();
   if (page === "account") loadAccountForm();
-  if (updateHash) setPageHash(page, activeCategory);
+  if (updateUrl) setPageUrl(page, activeCategory);
 }
 
 function renderCategories() {
@@ -78,6 +103,9 @@ function renderFilterBar() {
     e.target.classList.add("active");
     activeCategory = e.target.dataset.category;
     renderProducts(activeCategory);
+    if (document.getElementById("page-products").classList.contains("active")) {
+      setPageUrl("products", activeCategory);
+    }
   });
 }
 
@@ -250,8 +278,8 @@ function initApp() {
     }
   });
 
-  window.addEventListener("hashchange", () => {
-    const { page, category } = getPageFromHash();
+  window.addEventListener("popstate", () => {
+    const { page, category } = getPageFromUrl();
     showPage(page, category);
   });
 
@@ -262,7 +290,7 @@ function initApp() {
   updateAccountUI();
   loadAccountForm();
 
-  const { page: initialPage, category: initialCategory } = getPageFromHash();
+  const { page: initialPage, category: initialCategory } = getPageFromUrl();
   if (initialPage !== "home" || initialCategory) {
     showPage(initialPage, initialCategory);
   }
