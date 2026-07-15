@@ -7,8 +7,32 @@ const PAGE_TITLES = {
   checkout: "Checkout - Wingify Shop",
   account: "Account - Wingify Shop",
 };
+const VALID_PAGES = ["home", "products", "cart", "checkout", "account"];
 
-function showPage(page, category) {
+function buildHash(page, category) {
+  if (page === "home") return "#home";
+  if (page === "products" && category && category !== "all") return `#products/${category}`;
+  return `#${page}`;
+}
+
+function setPageHash(page, category) {
+  const hash = buildHash(page, category);
+  if (window.location.hash !== hash) window.location.hash = hash.slice(1);
+}
+
+function getPageFromHash() {
+  const raw = window.location.hash.replace(/^#/, "").toLowerCase();
+  if (!raw || raw === "home") return { page: "home", category: null };
+  const [page, category] = raw.split("/");
+  if (!VALID_PAGES.includes(page)) return { page: "home", category: null };
+  if (page === "products" && category && CATEGORIES.some((c) => c.id === category)) {
+    return { page, category };
+  }
+  return { page, category: null };
+}
+
+function showPage(page, category, updateHash = false) {
+  if (!VALID_PAGES.includes(page)) page = "home";
   document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.getElementById("page-" + page).classList.add("active");
   document.querySelectorAll(".nav-links a").forEach((a) => {
@@ -23,6 +47,7 @@ function showPage(page, category) {
   if (page === "cart") renderCart();
   if (page === "checkout") renderCheckout();
   if (page === "account") loadAccountForm();
+  if (updateHash) setPageHash(page, activeCategory);
 }
 
 function renderCategories() {
@@ -221,8 +246,13 @@ function initApp() {
     const target = e.target.closest("[data-page]");
     if (target) {
       e.preventDefault();
-      showPage(target.dataset.page, target.dataset.category);
+      showPage(target.dataset.page, target.dataset.category, true);
     }
+  });
+
+  window.addEventListener("hashchange", () => {
+    const { page, category } = getPageFromHash();
+    showPage(page, category);
   });
 
   renderCategories();
@@ -231,6 +261,11 @@ function initApp() {
   updateCartBadge();
   updateAccountUI();
   loadAccountForm();
+
+  const { page: initialPage, category: initialCategory } = getPageFromHash();
+  if (initialPage !== "home" || initialCategory) {
+    showPage(initialPage, initialCategory);
+  }
 }
 
 initApp();
