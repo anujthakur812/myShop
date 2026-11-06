@@ -72,9 +72,12 @@ function initAccount() {
     if (genderGroup) genderGroup.classList.remove("field-error");
   }
 
-  function isValidEmailOptional(value) {
-    if (!value) return true;
+  function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function isValidEmailIfProvided(value) {
+    return value === "" || isValidEmail(value);
   }
 
   const signupFormEl = document.getElementById("signup-form");
@@ -102,13 +105,13 @@ function initAccount() {
     const country = countryEl.value;
 
     const messages = [];
-    if (!lastName) {
-      lastNameEl.classList.add("input-error");
-      messages.push("Last name is required.");
+    if (!firstName) {
+      firstNameEl.classList.add("input-error");
+      messages.push("First name is required.");
     }
-    if (!phone) {
-      phoneEl.classList.add("input-error");
-      messages.push("Phone number is required.");
+    if (!isValidEmailIfProvided(email)) {
+      emailEl.classList.add("input-error");
+      messages.push("Please enter a valid email address.");
     }
     if (!gender) {
       if (genderFieldGroup) genderFieldGroup.classList.add("field-error");
@@ -117,10 +120,6 @@ function initAccount() {
     if (!country) {
       countryEl.classList.add("input-error");
       messages.push("Country is required.");
-    }
-    if (email && !isValidEmailOptional(email)) {
-      emailEl.classList.add("input-error");
-      messages.push("Please enter a valid email address.");
     }
 
     if (messages.length) {
@@ -136,7 +135,7 @@ function initAccount() {
 
     const data = { firstName, lastName, email, phone, gender, country };
     saveAccount(data);
-    const greet = firstName || "there";
-    showToast("Welcome, " + greet + "!");
+    showToast("Welcome, " + firstName + "!");
+    if (typeof showPage === "function") showPage("home", undefined, true);
   });
 }
