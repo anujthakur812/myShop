@@ -151,13 +151,31 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
         <div class="account-card">
           <h2>My Account</h2>
           <p class="subtitle">Sign up to track orders and enjoy member benefits</p>
-          <form name="signupForm" id="signup-form">
+          <form name="signupForm" id="signup-form" novalidate>
+            <div id="signup-form-alert" class="form-alert" role="alert" aria-live="polite"></div>
             <div class="form-row">
-              <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" required placeholder="John" /></div>
-              <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" required placeholder="Doe" /></div>
+              <div class="form-group"><label for="firstName">First Name <span class="label-optional">(optional)</span></label><input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="John" /></div>
+              <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Doe" /></div>
             </div>
-            <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required placeholder="john.doe@example.com" /></div>
-            <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" required placeholder="+1 234 567 8900" /></div>
+            <div class="form-group"><label for="email">Email <span class="label-optional">(optional)</span></label><input type="email" id="email" name="email" autocomplete="email" placeholder="john.doe@example.com" /></div>
+            <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+1 234 567 8900" /></div>
+            <div class="form-group" id="gender-field-group">
+              <span class="gender-label" id="gender-label">Gender</span>
+              <div class="account-gender-options" role="radiogroup" aria-labelledby="gender-label">
+                <label class="account-radio-label"><input type="radio" name="gender" id="gender-male" value="male" /> Male</label>
+                <label class="account-radio-label"><input type="radio" name="gender" id="gender-female" value="female" /> Female</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <select id="country" name="country" autocomplete="country-name">
+                <option value="">Select country</option>
+                <option value="India">India</option>
+                <option value="United States">United States</option>
+                <option value="China">China</option>
+                <option value="Nepal">Nepal</option>
+              </select>
+            </div>
             <button type="submit" class="btn btn-accent" style="width:100%">Sign Up</button>
           </form>
         </div>
@@ -506,10 +524,19 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
     function loadAccountForm() {
       const account = getAccount();
       if (account) {
-        document.getElementById("firstName").value = account.firstName;
-        document.getElementById("lastName").value = account.lastName;
-        document.getElementById("email").value = account.email;
-        document.getElementById("phone").value = account.phone;
+        document.getElementById("firstName").value = account.firstName || "";
+        document.getElementById("lastName").value = account.lastName || "";
+        document.getElementById("email").value = account.email || "";
+        document.getElementById("phone").value = account.phone || "";
+        const g = account.gender;
+        const male = document.getElementById("gender-male");
+        const female = document.getElementById("gender-female");
+        if (male && female) {
+          male.checked = g === "male";
+          female.checked = g === "female";
+        }
+        const countryEl = document.getElementById("country");
+        if (countryEl && account.country) countryEl.value = account.country;
       }
     }
 
@@ -540,20 +567,84 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       showToast("Logged out successfully");
     });
 
-    document.getElementById("signup-form").addEventListener("submit", e => {
+    function clearSignupFormErrors() {
+      const form = document.getElementById("signup-form");
+      const alertEl = document.getElementById("signup-form-alert");
+      if (alertEl) {
+        alertEl.textContent = "";
+        alertEl.classList.remove("show", "form-alert-error");
+      }
+      form.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
+      const genderGroup = document.getElementById("gender-field-group");
+      if (genderGroup) genderGroup.classList.remove("field-error");
+    }
+
+    function isValidEmailOptional(value) {
+      if (!value) return true;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    const signupFormEl = document.getElementById("signup-form");
+    signupFormEl.addEventListener("input", clearSignupFormErrors, true);
+    signupFormEl.addEventListener("change", clearSignupFormErrors, true);
+
+    signupFormEl.addEventListener("submit", e => {
       e.preventDefault();
-      const data = {
-        firstName: document.getElementById("firstName").value.trim(),
-        lastName: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-      };
-      if (!data.firstName || !data.lastName || !data.email || !data.phone) {
-        showToast("Please fill in all fields");
+      clearSignupFormErrors();
+
+      const firstNameEl = document.getElementById("firstName");
+      const lastNameEl = document.getElementById("lastName");
+      const emailEl = document.getElementById("email");
+      const phoneEl = document.getElementById("phone");
+      const countryEl = document.getElementById("country");
+      const genderFieldGroup = document.getElementById("gender-field-group");
+      const alertEl = document.getElementById("signup-form-alert");
+
+      const firstName = firstNameEl.value.trim();
+      const lastName = lastNameEl.value.trim();
+      const email = emailEl.value.trim();
+      const phone = phoneEl.value.trim();
+      const genderEl = document.querySelector('input[name="gender"]:checked');
+      const gender = genderEl ? genderEl.value : "";
+      const country = countryEl.value;
+
+      const messages = [];
+      if (!lastName) {
+        lastNameEl.classList.add("input-error");
+        messages.push("Last name is required.");
+      }
+      if (!phone) {
+        phoneEl.classList.add("input-error");
+        messages.push("Phone number is required.");
+      }
+      if (!gender) {
+        if (genderFieldGroup) genderFieldGroup.classList.add("field-error");
+        messages.push("Gender is required.");
+      }
+      if (!country) {
+        countryEl.classList.add("input-error");
+        messages.push("Country is required.");
+      }
+      if (email && !isValidEmailOptional(email)) {
+        emailEl.classList.add("input-error");
+        messages.push("Please enter a valid email address.");
+      }
+
+      if (messages.length) {
+        if (alertEl) {
+          alertEl.textContent = messages.join(" ");
+          alertEl.classList.add("show", "form-alert-error");
+          alertEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+          showToast(messages.join(" "));
+        }
         return;
       }
+
+      const data = { firstName, lastName, email, phone, gender, country };
       saveAccount(data);
-      showToast("Welcome, " + data.firstName + "!");
+      const greet = firstName || "there";
+      showToast("Welcome, " + greet + "!");
     });
 
     renderCategories();
