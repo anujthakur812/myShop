@@ -154,11 +154,11 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
           <form name="signupForm" id="signup-form" novalidate>
             <div id="signup-form-alert" class="form-alert" role="alert" aria-live="polite"></div>
             <div class="form-row">
-              <div class="form-group"><label for="firstName">First Name <span class="label-optional">(optional)</span></label><input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="John" /></div>
-              <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Doe" /></div>
+              <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="John" /></div>
+              <div class="form-group"><label for="lastName">Last Name <span class="label-optional">(optional)</span></label><input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Doe" /></div>
             </div>
             <div class="form-group"><label for="email">Email <span class="label-optional">(optional)</span></label><input type="email" id="email" name="email" autocomplete="email" placeholder="john.doe@example.com" /></div>
-            <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+1 234 567 8900" /></div>
+            <div class="form-group"><label for="phone">Phone Number <span class="label-optional">(optional)</span></label><input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+1 234 567 8900" /></div>
             <div class="form-group" id="gender-field-group">
               <span class="gender-label" id="gender-label">Gender</span>
               <div class="account-gender-options" role="radiogroup" aria-labelledby="gender-label">
@@ -579,9 +579,12 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       if (genderGroup) genderGroup.classList.remove("field-error");
     }
 
-    function isValidEmailOptional(value) {
-      if (!value) return true;
+    function isValidEmail(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function isValidEmailIfProvided(value) {
+      return value === "" || isValidEmail(value);
     }
 
     const signupFormEl = document.getElementById("signup-form");
@@ -609,13 +612,13 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       const country = countryEl.value;
 
       const messages = [];
-      if (!lastName) {
-        lastNameEl.classList.add("input-error");
-        messages.push("Last name is required.");
+      if (!firstName) {
+        firstNameEl.classList.add("input-error");
+        messages.push("First name is required.");
       }
-      if (!phone) {
-        phoneEl.classList.add("input-error");
-        messages.push("Phone number is required.");
+      if (!isValidEmailIfProvided(email)) {
+        emailEl.classList.add("input-error");
+        messages.push("Please enter a valid email address.");
       }
       if (!gender) {
         if (genderFieldGroup) genderFieldGroup.classList.add("field-error");
@@ -624,10 +627,6 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
       if (!country) {
         countryEl.classList.add("input-error");
         messages.push("Country is required.");
-      }
-      if (email && !isValidEmailOptional(email)) {
-        emailEl.classList.add("input-error");
-        messages.push("Please enter a valid email address.");
       }
 
       if (messages.length) {
@@ -643,8 +642,8 @@ if(f=!1,v=d.querySelector('#vwoCode'),cc={},-1<d.URL.indexOf('__vwo_disable__')|
 
       const data = { firstName, lastName, email, phone, gender, country };
       saveAccount(data);
-      const greet = firstName || "there";
-      showToast("Welcome, " + greet + "!");
+      showToast("Welcome, " + firstName + "!");
+      showPage("home", undefined, true);
     });
 
     renderCategories();
